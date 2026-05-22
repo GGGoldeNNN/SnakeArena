@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://bw83e6qbfd8bf"]
+
+[ext_resource type="Texture2D" uid="uid://ekgw10dhrnr8" path="res://assets/image/player/player_airplane.png" id="1_8afob"]
+[ext_resource type="Script" uid="uid://ba8at10vv0iyw" path="res://scripts/player/player.gd" id="2_4so6y"]
+
+[sub_resource type="RectangleShape2D" id="1_64q5t"]
+size = Vector2(303, 548)
+
+[node name="Player" type="Area2D" unique_id=1042600595]
+collision_mask = 2
+script = ExtResource("2_4so6y")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=303044938]
+position_smoothing_enabled = true
+position_smoothing_speed = 2.0
+rotation_smoothing_enabled = true
+rotation_smoothing_speed = 2.0
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=1444817821]
+modulate = Color(0, 0, 0, 0.35)
+texture_filter = 4
+texture = ExtResource("1_8afob")
+offset = Vector2(30, 30)
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=2105275906]
+texture_filter = 4
+texture = ExtResource("1_8afob")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=147036922]
+position = Vector2(0.5, 1)
+shape = SubResource("1_64q5t")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

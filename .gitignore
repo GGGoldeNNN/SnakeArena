@@ -1,0 +1,17 @@
+﻿# Godot 4 exports
+exports/
+
+# Godot import cache
+.godot/
+
+# OS files
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+*.iml
+.vscode/
