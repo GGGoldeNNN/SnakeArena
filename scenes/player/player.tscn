@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bw83e6qbfd8bf"]
 
 [ext_resource type="Texture2D" uid="uid://ekgw10dhrnr8" path="res://assets/image/player/player_airplane.png" id="1_8afob"]
-[ext_resource type="Script" uid="uid://ba8at10vv0iyw" path="res://scripts/player/player.gd" id="2_4so6y"]
-
-[sub_resource type="RectangleShape2D" id="1_64q5t"]
-size = Vector2(303, 548)
+[ext_resource type="Script" uid="uid://ba8at10vv0iyw" path="res://scripts/game/player/player.gd" id="2_4so6y"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dovo2"]
+radius = 45.5
+height = 526.0
 
 [node name="Player" type="Area2D" unique_id=1042600595]
 collision_mask = 2
@@ -28,7 +28,7 @@ texture = ExtResource("1_8afob")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=147036922]
 position = Vector2(0.5, 1)
-shape = SubResource("1_64q5t")
+shape = SubResource("CapsuleShape2D_dovo2")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

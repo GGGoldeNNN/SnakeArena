@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://rm8mw1e0fydl"]
+
+[ext_resource type="Texture2D" uid="uid://uxwd3xl8n51y" path="res://assets/image/enemy/basic_head.png" id="1_aol03"]
+[ext_resource type="Script" uid="uid://ciuc7kucdkjsp" path="res://scripts/game/enemy/monster_head.gd" id="2_l3m4n"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1g2b2"]
+radius = 131.05057
+
+[node name="MonsterHead" type="Area2D" unique_id=801812575]
+collision_layer = 2
+script = ExtResource("2_l3m4n")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=356749847]
+modulate = Color(0, 0, 0, 0.34901962)
+texture = ExtResource("1_aol03")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1674186759]
+texture = ExtResource("1_aol03")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=471359693]
+position = Vector2(0.5, 0)
+shape = SubResource("CircleShape2D_1g2b2")

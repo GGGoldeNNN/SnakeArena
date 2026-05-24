@@ -29,14 +29,19 @@ func initialize(player_bullet_scene: PackedScene, enemy_bullet_scene: PackedScen
 
 
 ## 生成一颗玩家子弹
-func spawn_player_bullet(data: BulletData) -> Node2D:
+func spawn_player_bullet(data: BulletData) -> Bullet:
 	if not _initialized or not _player_pool:
 		return null
-	return _player_pool.acquire() as Node2D
+	var bullet := _player_pool.acquire() as Bullet
+	if bullet:
+		bullet._manager = self
+		bullet.speed = data.speed
+		bullet.max_distance = data.speed * data.lifetime
+	return bullet
 
 
 ## 生成一颗敌人子弹
-func spawn_enemy_bullet(data: BulletData) -> Node2D:
+func spawn_enemy_bullet(_data: BulletData) -> Node2D:
 	if not _initialized or not _enemy_pool:
 		return null
 	return _enemy_pool.acquire() as Node2D

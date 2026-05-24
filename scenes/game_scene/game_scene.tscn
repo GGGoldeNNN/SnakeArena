@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://b0g8yrtd8py2x"]
 
-[ext_resource type="Script" uid="uid://8rhpmxkm01iw" path="res://scripts/scene/game_scene/game_scene.gd" id="1_0mut5"]
+[ext_resource type="Script" uid="uid://8rhpmxkm01iw" path="res://scripts/game/game_scene/game_scene.gd" id="1_0mut5"]
+[ext_resource type="Script" path="res://scripts/simple_ECS/systems/player_movement_system.gd" id="2_plmv"]
+[ext_resource type="Script" path="res://scripts/simple_ECS/systems/auto_shoot_system.gd" id="3_aush"]
+[ext_resource type="Script" path="res://scripts/simple_ECS/systems/movement_system.gd" id="4_mvst"]
+[ext_resource type="Script" path="res://scripts/simple_ECS/systems/shooter_system.gd" id="5_shst"]
+[ext_resource type="Script" path="res://scripts/simple_ECS/systems/health_system.gd" id="6_hlst"]
 
 [node name="GameScene" type="Node2D" unique_id=2109524139]
 script = ExtResource("1_0mut5")
@@ -18,4 +23,24 @@ color = Color(0.77929145, 0.77929133, 0.7792915, 1)
 
 [node name="GameNode" type="Node2D" parent="." unique_id=944494120]
 
+[node name="BossInitialPosition" type="Marker2D" parent="GameNode" unique_id=1341452995]
+position = Vector2(960, -1500)
+
 [node name="GameUI" type="CanvasLayer" parent="." unique_id=1061574652]
+
+[node name="Systems" type="Node" parent="."]
+
+[node name="PlayerMovementSystem" type="Node" parent="Systems"]
+script = ExtResource("2_plmv")
+
+[node name="AutoShootSystem" type="Node" parent="Systems"]
+script = ExtResource("3_aush")
+
+[node name="MovementSystem" type="Node" parent="Systems"]
+script = ExtResource("4_mvst")
+
+[node name="ShooterSystem" type="Node" parent="Systems"]
+script = ExtResource("5_shst")
+
+[node name="HealthSystem" type="Node" parent="Systems"]
+script = ExtResource("6_hlst")

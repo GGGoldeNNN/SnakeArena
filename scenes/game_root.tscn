@@ -1,6 +1,16 @@
 [gd_scene format=3 uid="uid://de8kup44isf63"]
 
 [ext_resource type="Script" uid="uid://c6kq3miex4kjm" path="res://scripts/game_root.gd" id="1_"]
+[ext_resource type="Script" uid="uid://bl7b6lhms3wk3" path="res://addons/post_processing/node/post_process.gd" id="2_uebra"]
+[ext_resource type="Resource" uid="uid://dvfsva6a37qt" path="res://data/post_process/post_process.tres" id="3_jb3nc"]
 
 [node name="GameRoot" type="Node" unique_id=2139340065]
 script = ExtResource("1_")
+
+[node name="PostProcessNode" type="Node" parent="." unique_id=1324146409]
+
+[node name="PostProcess" type="CanvasLayer" parent="PostProcessNode" unique_id=1366009753]
+visible = false
+script = ExtResource("2_uebra")
+configuration = ExtResource("3_jb3nc")
+metadata/_custom_type_script = "uid://bl7b6lhms3wk3"

@@ -17,7 +17,7 @@ var _bgm_player: AudioStreamPlayer = null
 # 音量设置
 var _master_volume: float = 1.0 # 主音量 (0.0 - 1.0)
 var _sfx_volume: float = 1.0 # 音效音量 (0.0 - 1.0)
-var _bgm_volume: float = 0.8 # 背景音乐音量 (0.0 - 1.0)
+var _bgm_volume: float = 1.0 # 背景音乐音量 (0.0 - 1.0)
 
 # 点击音效开关状态
 var _click_sound_enabled: bool = false # 默认为关

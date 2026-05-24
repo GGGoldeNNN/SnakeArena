@@ -16,11 +16,11 @@ var auto_grow: bool = true
 ## 创建对象池
 ## @param scene     对象场景（PackedScene）
 ## @param parent    挂载父节点
-## @param prewarm   预创建数量
-func _init(scene: PackedScene, parent: Node, prewarm: int = 0) -> void:
+## @param prewarm_count   预创建数量
+func _init(scene: PackedScene, parent: Node, prewarm_count: int = 0) -> void:
 	_scene = scene
 	_parent = parent
-	for i in prewarm:
+	for i in prewarm_count:
 		var obj := _create()
 		_deactivate(obj)
 		_pool.append(obj)
@@ -87,7 +87,8 @@ func _create() -> Node:
 func _activate(obj: Node) -> void:
 	obj.set_process(true)
 	obj.set_physics_process(true)
-	obj.process_mode = Node.PROCESS_MODE_INHERIT
+	# 也走 defer，确保在 _deactivate 挂起的 DISABLED 之后执行
+	obj.call_deferred("set_process_mode", Node.PROCESS_MODE_INHERIT)
 	if obj is CanvasItem:
 		obj.visible = true
 
@@ -95,7 +96,7 @@ func _activate(obj: Node) -> void:
 func _deactivate(obj: Node) -> void:
 	obj.set_process(false)
 	obj.set_physics_process(false)
-	obj.process_mode = Node.PROCESS_MODE_DISABLED
+	obj.call_deferred("set_process_mode", Node.PROCESS_MODE_DISABLED)
 	if obj is CanvasItem:
 		obj.visible = false
 	# 移出屏幕，避免 PhysicsServer 残留检测

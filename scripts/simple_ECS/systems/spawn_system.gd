@@ -71,42 +71,40 @@ func _try_spawn() -> void:
 		entry[1] -= 1
 
 
-## 将 EnemyData 应用到敌人实例上
+## 将 EnemyData 应用到敌人实例上（通过 EcsWorld）
 func _apply_enemy_data(enemy: Node2D, data: EnemyData) -> void:
-	var hc: HealthComponent = _find_component(enemy, "HealthComponent") as HealthComponent
-	if hc:
-		hc.max_hp = data.max_hp
-		hc.reset()
+	var eid := -1
+	if "entity_id" in enemy:
+		eid = enemy.entity_id as int
+	if eid < 0:
+		return
 
-	var mc: MovementComponent = _find_component(enemy, "MovementComponent") as MovementComponent
-	if mc:
-		mc.speed = data.speed
-		mc.pattern = data.move_pattern as int
-		mc.amplitude = data.amplitude
-		mc.frequency = data.frequency
-		mc.reset()
+	# 生命值
+	var health := EcsWorld.get_component(eid, HealthData) as HealthData
+	if health:
+		health.max_hp = data.max_hp
+		health.reset()
 
-	var sc: ShooterComponent = _find_component(enemy, "ShooterComponent") as ShooterComponent
-	if sc:
+	# 移动
+	var movement := EcsWorld.get_component(eid, MovementData) as MovementData
+	if movement:
+		movement.speed = data.speed
+		movement.pattern = data.move_pattern as int
+		movement.amplitude = data.amplitude
+		movement.frequency = data.frequency
+		movement.time_elapsed = 0.0
+
+	# 射击
+	var shooter := EcsWorld.get_component(eid, ShooterData) as ShooterData
+	if shooter:
 		if data.has_weapon and data.bullet_data:
-			sc.bullet_data = data.bullet_data
-			sc.fire_interval = data.fire_interval
-			sc.fire_angle = data.fire_angle
-			sc.reset()
-			sc.start()
+			shooter.bullet_data = data.bullet_data
+			shooter.fire_interval = data.fire_interval
+			shooter.fire_angle = data.fire_angle
+			shooter.fire_timer = 0.0
+			shooter.enabled = true
 		else:
-			sc.stop()
-
-
-## 递归查找子节点中的组件
-func _find_component(root: Node, component_class: String) -> Node:
-	for child in root.get_children():
-		if child.is_class(component_class):
-			return child
-		var found: Node = _find_component(child, component_class)
-		if found:
-			return found
-	return null
+			shooter.enabled = false
 
 
 ## 开始生成

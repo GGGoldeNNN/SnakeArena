@@ -23,6 +23,7 @@ SignalManager="*res://scripts/manager/signal_manager.gd"
 AudioManager="*res://scripts/manager/audio_manager.gd"
 GameManager="*res://scripts/manager/game_manager.gd"
 SaveManager="*res://scripts/save_system/save_manager.gd"
+EcsWorld="*res://scripts/simple_ECS/core/ecs_world.gd"
 
 [display]
 
@@ -32,10 +33,15 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/post_processing/plugin.cfg")
+
 [file_customization]
 
 folder_colors={
 "res://assets/": "pink",
+"res://data/": "yellow",
 "res://scenes/": "purple",
 "res://scripts/": "green"
 }

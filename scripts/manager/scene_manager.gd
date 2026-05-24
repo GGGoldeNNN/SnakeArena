@@ -7,13 +7,13 @@ var game_root: Node
 
 ## 切换场景[br]
 ## _scene_name: 场景名称
-func switch_scenes(_scene_name: String):
+func switch_scenes(scene_name: String) -> void:
 	if game_root == null:
 		print_debug("SceneManager: 游戏根节点未设置")
 		return
 	if current_active_scene != null:
 		current_active_scene.queue_free()
-	var new_scene = GlobalManager.SCENE[_scene_name].instantiate()
+	var new_scene: Node = GlobalManager.SCENE[scene_name].instantiate()
 	current_active_scene = new_scene
 	game_root.add_child(new_scene)
-	print("SceneManager: 场景切换至 %s"%_scene_name)
+	print("SceneManager: 场景切换至 %s" % scene_name)

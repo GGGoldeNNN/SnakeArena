@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://btg5cpyeiee2n"]
+
+[ext_resource type="Texture2D" uid="uid://m3gnkcmxlttj" path="res://assets/image/enemy/basic_monster_node.png" id="1_xd55o"]
+[ext_resource type="Script" uid="uid://crgedn61cot4u" path="res://scripts/game/enemy/monster_node.gd" id="2_v6w7x"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_bfvuw"]
+radius = 243.59392
+
+[node name="MonsterNode" type="Area2D" unique_id=428014221]
+collision_layer = 2
+script = ExtResource("2_v6w7x")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=934292877]
+modulate = Color(0, 0, 0, 0.34901962)
+position = Vector2(30, 30)
+texture = ExtResource("1_xd55o")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=682392089]
+texture = ExtResource("1_xd55o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=977606361]
+shape = SubResource("CircleShape2D_bfvuw")
+

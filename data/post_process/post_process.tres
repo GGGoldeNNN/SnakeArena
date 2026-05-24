@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PostProcessingConfiguration" format=3 uid="uid://dvfsva6a37qt"]
+
+[ext_resource type="Script" uid="uid://dy420a0n0tx0x" path="res://addons/post_processing/resource/post_processing_configuration.gd" id="1_fwedq"]
+
+[resource]
+script = ExtResource("1_fwedq")
+ChromaticAberration = true
+Vignette = true
+VignetteIntensity = 0.3
+VignetteOpacity = 0.4
+GrainPower = 15
+AnalogMonitor = true
+AnalogMonitorResolution = Vector2(1920, 1080)
+metadata/_custom_type_script = "uid://dy420a0n0tx0x"
