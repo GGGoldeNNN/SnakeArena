@@ -10,7 +10,6 @@ script = ExtResource("1_")
 [node name="PostProcessNode" type="Node" parent="." unique_id=1324146409]
 
 [node name="PostProcess" type="CanvasLayer" parent="PostProcessNode" unique_id=1366009753]
-visible = false
 script = ExtResource("2_uebra")
 configuration = ExtResource("3_jb3nc")
 metadata/_custom_type_script = "uid://bl7b6lhms3wk3"

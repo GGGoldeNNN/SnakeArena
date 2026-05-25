@@ -11,6 +11,8 @@ signal destroyed(node: MonsterNode)
 
 ## ECS 实体 ID
 var entity_id: int = -1
+## 是否由对象池管理（为 true 时 on_destroyed 不调用 queue_free）
+var is_pooled: bool = false
 
 
 func _ready() -> void:
@@ -45,7 +47,8 @@ func _update_scale() -> void:
 			var shadow := $Shadow as Sprite2D
 			if shadow:
 				shadow.scale = Vector2(ratio, ratio)
-				shadow.position = Vector2(30, 30) * ratio
+				var shadow_offset := display_size * 0.06
+				shadow.position = Vector2(shadow_offset, shadow_offset)
 	_resize_collision()
 
 
@@ -55,6 +58,16 @@ func _resize_collision() -> void:
 		var cs := col.shape as CircleShape2D
 		if cs:
 			cs.radius = display_size * 0.5
+
+
+## 从对象池重新激活时重置状态
+func reset() -> void:
+	modulate = Color.WHITE
+	var health := EcsWorld.get_component(entity_id, HealthData) as HealthData
+	if health:
+		health.current_hp = health.max_hp
+		health.invincible_timer = 0.0
+		health.is_dead = false
 
 
 ## 受击闪红效果
@@ -68,4 +81,5 @@ func flash_hit() -> void:
 func on_destroyed() -> void:
 	destroyed.emit(self)
 	SignalManager.enemy_killed.emit(self, global_position)
-	queue_free()
+	if not is_pooled:
+		queue_free()

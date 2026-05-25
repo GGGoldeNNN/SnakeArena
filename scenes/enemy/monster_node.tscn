@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://m3gnkcmxlttj" path="res://assets/image/enemy/basic_monster_node.png" id="1_xd55o"]
 [ext_resource type="Script" uid="uid://crgedn61cot4u" path="res://scripts/game/enemy/monster_node.gd" id="2_v6w7x"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_bfvuw"]
 radius = 243.59392
 
@@ -15,8 +16,8 @@ position = Vector2(30, 30)
 texture = ExtResource("1_xd55o")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=682392089]
+self_modulate = Color(0.94921875, 0.94921875, 0.94921875, 1)
 texture = ExtResource("1_xd55o")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=977606361]
 shape = SubResource("CircleShape2D_bfvuw")
-

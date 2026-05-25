@@ -35,7 +35,8 @@ func _update_scale() -> void:
 			var shadow: Sprite2D = $Shadow
 			if shadow:
 				shadow.scale = Vector2(ratio, ratio)
-				shadow.position = Vector2(30, 30) * ratio
+				var shadow_offset := display_size * 0.06
+				shadow.position = Vector2(shadow_offset, shadow_offset)
 
 	# 直接修改碰撞体尺寸
 	_resize_collision()

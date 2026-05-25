@@ -37,8 +37,11 @@ var _trail_distances: Array[float] = []
 ## 弧形路径时间
 var _arc_time: float = 0.0
 
-## 缩带动画计时（>0 时暂停追击和身体更新，让 Tween 流畅过渡）
+## 缩带动画计时（>0 时暂停追击和身体更新）
 var _freeze_timer: float = 0.0
+
+## 身体节点对象池（预创建+隐藏，按需激活）
+var _node_pool: Array[MonsterNode] = []
 
 
 func _ready() -> void:
@@ -48,18 +51,15 @@ func _ready() -> void:
 func _initialize_boss() -> void:
 	_update_spacing()
 	_create_head()
-	_create_body_segments()
 	_setup_entry()
-	Debug.Log_Success("Boss: 初始化完成，共 %d 节身体" % body_count)
+	Debug.Log_Success("Boss: 初始化完成，共 %d 节身体（逐帧生成）" % body_count)
 
 
-## 阴影在纹理中的偏移量（与 MonsterNode/Head 的 Shadow.position 对应）
-const SHADOW_TEX_OFFSET: float = 30.0
-const BODY_TEX_SIZE: float = 500.0
+const NODE_SCENE := preload("res://scenes/enemy/monster_node.tscn")
 
 ## 根据显示尺寸自动计算间距
 func _update_spacing() -> void:
-	var shadow_px := SHADOW_TEX_OFFSET * (body_display_size / BODY_TEX_SIZE)
+	var shadow_px := body_display_size * 0.06
 	head_to_body_spacing = body_display_size * 0.5 + 50.0
 	body_spacing = body_display_size * 0.5 + body_display_size * 0.5 + shadow_px
 
@@ -72,40 +72,85 @@ func _create_head() -> void:
 	add_child(_head)
 
 
-func _create_body_segments() -> void:
-	var node_scene := preload("res://scenes/enemy/monster_node.tscn")
-	for i in body_count:
-		var node := node_scene.instantiate() as MonsterNode
-		node.set_display_size(body_display_size)
-		node.z_index = body_count - i
-		node.destroyed.connect(_on_body_destroyed)
-		add_child(node)
-		_body_segments.append(node)
+## trail 够长时在尾部生成下一节身体
+## 基于当前活跃身体数判断，摧毁后自动填补尾部空隙
+func _spawn_body_segments() -> void:
+	var active := _body_segments.size()
+	if active >= body_count:
+		return
+
+	# trail 长度是否足够容纳新节点（排在当前活跃身体的末尾）
+	var trail_len := _trail_distances[-1] if _trail_distances.size() > 0 else 0.0
+	var required := head_to_body_spacing + active * body_spacing
+	if trail_len < required:
+		return
+
+	# 从对象池获取（跳过 instantiate，已在预创建中完成）
+	if _node_pool.is_empty():
+		return
+
+	var node := _node_pool.pop_back() as MonsterNode
+	_pool_activate(node)
+	node.reset()
+	node.z_index = body_count - active
+	_body_segments.append(node)
 
 
 func _setup_entry() -> void:
 	_arc_time = 0.0
-	# 从最远的轨迹点添加到头部当前位置，保证头部是最新轨迹点
-	# 这样身体节在入口时在头部后方（上方）正确散布，不会因反向挤压而重叠
-	for i in range(body_count + 2, -1, -1):
-		var offset := 0.0 if i == 0 else head_to_body_spacing + (i - 1) * body_spacing
-		var offset_pos := _head.global_position + Vector2(0, -offset)
-		_add_trail_point(offset_pos)
+	# 只记录头部起始位置，不预填轨迹
+	# 身体节点会随头部移动、trail 自然增长后逐节出现
+	_add_trail_point(_head.global_position)
 	_head.rotation = PI
 	Debug.Log("Boss: 初始位置 %s，开始追逐玩家" % str(_head.global_position))
 
 
-func _process(_delta: float) -> void:
+# === 对象池 ===
+
+## 逐帧填充对象池（每次最多 5 个，分散 instantiate + add_child 的开销）
+func _refill_pool() -> void:
+	var target_total := body_count
+	var created := 0
+	while _node_pool.size() + _body_segments.size() < target_total and created < 5:
+		var node := NODE_SCENE.instantiate() as MonsterNode
+		node.set_display_size(body_display_size)
+		node.is_pooled = true
+		node.destroyed.connect(_on_body_destroyed)
+		add_child(node)
+		_pool_deactivate(node)
+		_node_pool.append(node)
+		created += 1
+
+
+func _pool_activate(node: MonsterNode) -> void:
+	node.visible = true
+	node.set_process(true)
+	node.set_physics_process(true)
+
+
+func _pool_deactivate(node: MonsterNode) -> void:
+	node.visible = false
+	node.set_process(false)
+	node.set_physics_process(false)
+	node.position = Vector2(-9999, -9999)
+
+
+func _process(delta: float) -> void:
+	# 逐帧填充对象池
+	_refill_pool()
+	# 逐帧生成身体节
+	_spawn_body_segments()
+
 	if _freeze_timer > 0:
-		_freeze_timer -= _delta
+		_freeze_timer -= delta
 		_add_trail_point(_head.global_position)
 		return
 
 	match _state:
 		State.CHASING:
-			_process_chasing(_delta)
+			_process_chasing(delta)
 		State.RETREATING:
-			_process_retreating(_delta)
+			_process_retreating(delta)
 
 	_add_trail_point(_head.global_position)
 	_update_body_positions()
@@ -198,7 +243,7 @@ func _update_body_rotations() -> void:
 
 
 func _prune_trail() -> void:
-	var max_dist := head_to_body_spacing + _body_segments.size() * body_spacing + body_spacing * 2.0
+	var max_dist := head_to_body_spacing + body_count * body_spacing + body_spacing * 2.0
 	if _trail_distances.size() > 2 and _trail_distances[-1] - _trail_distances[0] > max_dist:
 		var prune_to := _trail_distances[-1] - max_dist
 		var cut := 0
@@ -219,15 +264,20 @@ func _on_body_destroyed(node: MonsterNode) -> void:
 		return
 	_body_segments.remove_at(idx)
 
-	# 冻结追击 + 身体更新，Tween 独占位置控制
+	# 单 Tween 并行驱动所有剩余身体
 	var duration := 0.2
 	_freeze_timer = duration
+	var tw := create_tween()
+	tw.set_parallel(true)
 	for i in range(idx, _body_segments.size()):
 		var target_dist := head_to_body_spacing + i * body_spacing
 		var target_pos := _get_position_on_trail(target_dist)
-		var tw := create_tween()
 		tw.tween_property(_body_segments[i], "global_position", target_pos, duration).set_ease(Tween.EASE_OUT)
 		_body_segments[i].z_index = body_count - i
+
+	# 已销毁节点归还对象池（而非 queue_free）
+	_pool_deactivate(node)
+	_node_pool.append(node)
 
 	Debug.Log("Boss: 一节身体被摧毁，剩余 %d 节" % _body_segments.size())
 

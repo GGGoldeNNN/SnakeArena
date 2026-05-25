@@ -4,11 +4,6 @@
 
 [resource]
 script = ExtResource("1_fwedq")
-ChromaticAberration = true
-Vignette = true
 VignetteIntensity = 0.3
 VignetteOpacity = 0.4
-GrainPower = 15
-AnalogMonitor = true
-AnalogMonitorResolution = Vector2(1920, 1080)
 metadata/_custom_type_script = "uid://dy420a0n0tx0x"

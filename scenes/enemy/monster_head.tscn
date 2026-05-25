@@ -15,6 +15,7 @@ modulate = Color(0, 0, 0, 0.34901962)
 texture = ExtResource("1_aol03")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1674186759]
+self_modulate = Color(0.9490196, 0.9490196, 0.9490196, 1)
 texture = ExtResource("1_aol03")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=471359693]

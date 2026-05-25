@@ -6,7 +6,7 @@ extends Node2D
 func _ready() -> void:
 	_init_bullet_manager()
 	_spawn_player()
-	_spawn_boss()
+	_spawn_boss(200)
 	_play_bgm()
 	Debug.Log_Success("GameScene: 游戏场景初始化完成")
 
