@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 		else:
 			_handle_input(data, delta)
 		_apply_movement(data, node, delta)
-		_clamp_to_screen(data, node)
+		_clamp_to_screen(data, node, eid)
 
 
 func _handle_input(data: PlayerMovementData, delta: float) -> void:
@@ -50,7 +50,7 @@ func _apply_movement(data: PlayerMovementData, node: Node2D, delta: float) -> vo
 	node.position = node.position.round()
 
 
-func _clamp_to_screen(data: PlayerMovementData, node: Node2D) -> void:
+func _clamp_to_screen(data: PlayerMovementData, node: Node2D, eid: int) -> void:
 	var b := data.world_boundary
 	var bx := b.position.x
 	var by := b.position.y
@@ -81,3 +81,11 @@ func _clamp_to_screen(data: PlayerMovementData, node: Node2D) -> void:
 	if hit and bounce.length_squared() > 0:
 		data.velocity = bounce.normalized() * data.knockback_force
 		data.stun_timer = data.knockback_stun
+
+		# 边界碰撞造成伤害
+		var health := EcsWorld.get_component(eid, HealthData) as HealthData
+		if health and health.invincible_timer <= 0 and not health.is_dead:
+			health.take_damage(1.0)
+			SignalManager.player_damaged.emit(health.current_hp, health.max_hp)
+			if health.is_dead:
+				SignalManager.player_died.emit()

@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://cf8pb6qmqbkk7"]
+
+[ext_resource type="Script" path="res://scripts/game/ui/window.gd" id="4_fail"]
+[ext_resource type="Texture2D" uid="uid://bbd367sy3shib" path="res://assets/ui/panel.png" id="1_vuckb"]
+[ext_resource type="FontFile" uid="uid://c2sgf783nhwmg" path="res://assets/fonts/思源宋体 Bold.otf" id="2_ittsq"]
+[ext_resource type="Texture2D" uid="uid://cps5xuqf4ltn6" path="res://assets/ui/panel-2.png" id="3_06ugl"]
+
+[node name="Fail_Window" type="Control" unique_id=319937441]
+script = ExtResource("4_fail")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Mask" type="ColorRect" parent="." unique_id=1790742741]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.78431374)
+
+[node name="Panel" type="NinePatchRect" parent="." unique_id=1035536561]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+texture = ExtResource("1_vuckb")
+patch_margin_left = 7
+patch_margin_top = 7
+patch_margin_right = 6
+patch_margin_bottom = 8
+
+[node name="Button" type="Button" parent="Panel" unique_id=241053306]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -105.5
+offset_top = -151.0
+offset_right = 105.5
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_ittsq")
+theme_override_font_sizes/font_size = 30
+text = "重新开始"
+
+[node name="TitlePanel" type="NinePatchRect" parent="Panel" unique_id=1524889808]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = -50.0
+offset_right = 250.0
+offset_bottom = 30.0
+grow_horizontal = 2
+texture = ExtResource("3_06ugl")
+patch_margin_left = 14
+patch_margin_top = 14
+patch_margin_right = 14
+patch_margin_bottom = 14
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/TitlePanel" unique_id=1368873631]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="Title" type="Label" parent="Panel/TitlePanel/MarginContainer" unique_id=1417790872]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1953125, 0.1953125, 0.1953125, 1)
+theme_override_fonts/font = ExtResource("2_ittsq")
+theme_override_font_sizes/font_size = 40
+text = "——— 失败 ———"
+horizontal_alignment = 1
+vertical_alignment = 1

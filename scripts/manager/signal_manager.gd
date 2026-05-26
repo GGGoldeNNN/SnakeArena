@@ -6,6 +6,8 @@ extends Node
 signal player_damaged(hp: float, max_hp: float)
 ## 玩家死亡
 signal player_died()
+## Boss 被击败（所有身体节点摧毁后触发）
+signal boss_defeated()
 ## 玩家发射子弹
 signal player_shot(bullet: Node2D, target_pos: Vector2)
 ## 子弹命中敌人

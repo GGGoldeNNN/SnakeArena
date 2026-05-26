@@ -3,10 +3,12 @@
 class_name BulletManager
 extends Node
 
+const _OPool = preload("res://scripts/manager/object_pool.gd")
+
 ## 玩家子弹池
-var _player_pool: ObjectPool
+var _player_pool
 ## 敌人子弹池
-var _enemy_pool: ObjectPool
+var _enemy_pool
 
 var _initialized: bool = false
 var _player_bullet_root: Node
@@ -23,8 +25,8 @@ func _ready() -> void:
 ## @param enemy_bullet_scene   敌人子弹场景
 ## @param prewarm              每种子弹预创建数量
 func initialize(player_bullet_scene: PackedScene, enemy_bullet_scene: PackedScene, prewarm: int = 50) -> void:
-	_player_pool = ObjectPool.new(player_bullet_scene, _player_bullet_root, prewarm)
-	_enemy_pool = ObjectPool.new(enemy_bullet_scene, _enemy_bullet_root, prewarm)
+	_player_pool = _OPool.new(player_bullet_scene, _player_bullet_root, prewarm)
+	_enemy_pool = _OPool.new(enemy_bullet_scene, _enemy_bullet_root, prewarm)
 	_initialized = true
 
 

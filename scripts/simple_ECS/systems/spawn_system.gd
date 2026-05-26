@@ -3,6 +3,8 @@
 class_name SpawnSystem
 extends Node
 
+const _OPool = preload("res://scripts/manager/object_pool.gd")
+
 signal wave_started(wave: int)
 signal wave_cleared(wave: int)
 
@@ -11,7 +13,7 @@ signal wave_cleared(wave: int)
 ## 是否自动开始
 @export var auto_start: bool = true
 
-var _enemy_pool: ObjectPool
+var _enemy_pool
 var _current_wave: int = 0
 var _active_enemies: Array[Node] = []
 var _spawn_timer: float = 0.0
@@ -28,7 +30,7 @@ func _ready() -> void:
 
 ## 初始化敌人对象池
 func initialize(enemy_scene: PackedScene, prewarm: int = 10) -> void:
-	_enemy_pool = ObjectPool.new(enemy_scene, self, prewarm)
+	_enemy_pool = _OPool.new(enemy_scene, self, prewarm)
 
 
 func _process(delta: float) -> void:

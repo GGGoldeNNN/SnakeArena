@@ -283,4 +283,5 @@ func _on_body_destroyed(node: MonsterNode) -> void:
 
 	if _body_segments.is_empty():
 		_state = State.RETREATING
+		SignalManager.boss_defeated.emit()
 		Debug.Log("Boss: 所有身体节点被摧毁，撤退")
