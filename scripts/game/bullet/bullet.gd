@@ -12,7 +12,7 @@ var _direction: Vector2 = Vector2.RIGHT
 var _distance_traveled: float = 0.0
 var _damage: float = 1.0
 ## 所属 BulletManager（对象池回收用）
-var _manager: BulletManager = null
+var _manager: Node = null
 
 
 func _ready() -> void:
@@ -53,7 +53,7 @@ func _release() -> void:
 		queue_free()
 
 
-func init(direction: Vector2, damage: float = 1.0, manager: BulletManager = null) -> void:
+func init(direction: Vector2, damage: float = 1.0, manager: Node = null) -> void:
 	_direction = direction.normalized()
 	_damage = damage
 	if manager:

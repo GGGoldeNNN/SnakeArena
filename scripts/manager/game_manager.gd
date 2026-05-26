@@ -10,6 +10,11 @@ enum State { PLAYING, WON, LOST }
 var state: int = State.PLAYING
 
 
+## 重置游戏状态（新游戏开始时调用）
+func reset() -> void:
+	state = State.PLAYING
+
+
 func _ready() -> void:
 	SignalManager.boss_defeated.connect(_on_boss_defeated)
 	SignalManager.player_died.connect(_on_player_died)

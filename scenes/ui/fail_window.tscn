@@ -1,18 +1,18 @@
 [gd_scene format=3 uid="uid://cf8pb6qmqbkk7"]
 
-[ext_resource type="Script" path="res://scripts/game/ui/window.gd" id="4_fail"]
 [ext_resource type="Texture2D" uid="uid://bbd367sy3shib" path="res://assets/ui/panel.png" id="1_vuckb"]
 [ext_resource type="FontFile" uid="uid://c2sgf783nhwmg" path="res://assets/fonts/思源宋体 Bold.otf" id="2_ittsq"]
 [ext_resource type="Texture2D" uid="uid://cps5xuqf4ltn6" path="res://assets/ui/panel-2.png" id="3_06ugl"]
+[ext_resource type="Script" uid="uid://6d58d3rmc5hd" path="res://scripts/game/ui/game_window.gd" id="4_fail"]
 
 [node name="Fail_Window" type="Control" unique_id=319937441]
-script = ExtResource("4_fail")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("4_fail")
 
 [node name="Mask" type="ColorRect" parent="." unique_id=1790742741]
 layout_mode = 1

@@ -30,13 +30,13 @@ func _fire(node: Node2D, data: ShooterData) -> void:
 			offset_rad = deg_to_rad(data.spread_angle) * (i - (count - 1) / 2.0)
 
 		var dir := Vector2(cos(base_rad + offset_rad), sin(base_rad + offset_rad))
-		var bullet := bm.spawn_enemy_bullet(data.bullet_data) as Bullet
+		var bullet := bm.spawn_enemy_bullet(data.bullet_data) as Node2D
 		if bullet:
 			bullet.global_position = node.global_position
 			bullet.init(dir, data.bullet_data.damage)
 
 
-func _find_bullet_manager() -> BulletManager:
+func _find_bullet_manager() -> Node:
 	var root := get_tree().current_scene
 	if root:
 		var n := root.find_child("BulletManager", true, false)

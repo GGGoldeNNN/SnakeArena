@@ -88,7 +88,7 @@ func _fire_bullet(node: Node2D, data: AutoShooterData, target: Node2D) -> void:
 	bullet_data.damage = data.bullet_damage
 	bullet_data.lifetime = data.bullet_max_distance / data.bullet_speed
 
-	var bullet := bm.spawn_player_bullet(bullet_data) as Bullet
+	var bullet := bm.spawn_player_bullet(bullet_data) as Node2D
 	if not bullet:
 		return
 	bullet.global_position = node.global_position

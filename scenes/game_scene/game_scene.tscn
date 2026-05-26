@@ -6,6 +6,16 @@
 [ext_resource type="Script" uid="uid://bawe7qdn4x1ii" path="res://scripts/simple_ECS/systems/movement_system.gd" id="4_mvst"]
 [ext_resource type="Script" uid="uid://bvwxdcc8p0obr" path="res://scripts/simple_ECS/systems/shooter_system.gd" id="5_shst"]
 [ext_resource type="Script" uid="uid://b7e4i85cdx107" path="res://scripts/simple_ECS/systems/health_system.gd" id="6_hlst"]
+[ext_resource type="Texture2D" uid="uid://xfe04jdgjfve" path="res://assets/ui/avatar_panel.png" id="7_wmtvo"]
+[ext_resource type="Texture2D" uid="uid://4vyhues63utd" path="res://assets/image/player/player_airplane_avatar.png" id="8_201br"]
+[ext_resource type="Shader" uid="uid://buqx5i4kq3w4q" path="res://assets/shaders/alpha_mask.gdshader" id="9_ams"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_201br"]
+texture = ExtResource("7_wmtvo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ams"]
+shader = ExtResource("9_ams")
+shader_parameter/mask = ExtResource("7_wmtvo")
 
 [node name="GameScene" type="Node2D" unique_id=2109524139]
 script = ExtResource("1_0mut5")
@@ -44,3 +54,42 @@ color = Color(0.77929145, 0.77929133, 0.7792915, 1)
 position = Vector2(960, -1500)
 
 [node name="GameUI" type="CanvasLayer" parent="." unique_id=1061574652]
+
+[node name="PlayerStatus" type="Control" parent="GameUI" unique_id=1606342227]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 150.0
+grow_horizontal = 2
+
+[node name="AvatarPanel" type="Panel" parent="GameUI/PlayerStatus" unique_id=2115355999]
+self_modulate = Color(0.5639453, 1, 0.23242438, 1)
+clip_contents = true
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 50.0
+offset_top = -40.0
+offset_right = 130.0
+offset_bottom = 40.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_201br")
+
+[node name="AvatarImage" type="TextureRect" parent="GameUI/PlayerStatus/AvatarPanel" unique_id=145966159]
+material = SubResource("ShaderMaterial_ams")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.0
+offset_top = -37.0
+offset_right = 37.0
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+texture = ExtResource("8_201br")
+expand_mode = 1

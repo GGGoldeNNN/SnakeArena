@@ -27,7 +27,7 @@ var body_spacing: float
 ## 头部中心到第一节身体中心的距离（由 display_size 自动计算）
 var head_to_body_spacing: float
 
-var _head: MonsterHead
+var _head: Node2D
 var _body_segments: Array[MonsterNode] = []
 var _state: State = State.CHASING
 

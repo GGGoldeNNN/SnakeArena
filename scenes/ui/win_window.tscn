@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bga2llamnynb6"]
 
-[ext_resource type="Script" path="res://scripts/game/ui/window.gd" id="4_win"]
+[ext_resource type="Script" path="res://scripts/game/ui/game_window.gd" id="4_win"]
 [ext_resource type="Texture2D" uid="uid://bbd367sy3shib" path="res://assets/ui/panel.png" id="1_1c8a7"]
 [ext_resource type="FontFile" uid="uid://c2sgf783nhwmg" path="res://assets/fonts/思源宋体 Bold.otf" id="2_f0dhq"]
 [ext_resource type="Texture2D" uid="uid://cps5xuqf4ltn6" path="res://assets/ui/panel-2.png" id="3_b13qa"]

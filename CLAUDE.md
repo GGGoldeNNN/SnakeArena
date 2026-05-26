@@ -59,7 +59,7 @@ res://
 │   │   │   └── monster_node.gd #     蛇身节点（独立受击/销毁）
 │   │   ├── game_scene/game_scene.gd # 游戏主场景（生成玩家/Boss/子弹管理器）
 │   │   ├── player/player.gd    #     玩家飞机（class_name Player，协调器）
-│   │   └── ui/window.gd        #     胜利/失败窗口通用逻辑
+│   │   └── ui/game_window.gd    #     胜利/失败窗口通用逻辑
 │   ├── manager/                #   全局管理器（autoload）
 │   │   ├── audio_manager.gd    #     音频管理器
 │   │   ├── game_manager.gd     #     游戏状态管理器
@@ -547,10 +547,11 @@ enum Pattern { LINEAR, SINE, CHASE, ORBIT, STOP }
 
 ### 胜利/失败窗口
 
-- `window.gd`（extends Control）— 通用脚本
+- `game_window.gd`（extends Control）— 通用脚本
 - Panel + Button（重新开始）
-- 重新开始: `get_tree().paused = false` → `SceneManager.switch_scenes(restart_scene)`
+- 重新开始: `get_tree().paused = false` → `reload_current_scene()`
 - 由 GameManager 在检测到游戏结束时弹出
+- 脚本：`game_window.gd`（extends Control），process_mode = PROCESS_MODE_WHEN_PAUSED
 
 ---
 

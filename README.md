@@ -15,6 +15,7 @@
 - **碰撞与击退** — 接触敌人/子弹时被弹开，附带短暂硬直状态
 - **边界碰撞** — 撞墙触发镜面反射击退 + 额外伤害
 - **攻击范围可视化** — 玩家周围半透明攻击圈绘制
+- **头像 UI** — 飞机头像面板 + Alpha Mask Shader 裁剪显示
 - **Boss 蛇形敌人** — 贪吃蛇式多节身体（头部 + N 节身体），正弦弧形追逐玩家
   - 身体独立受击/销毁，摧毁后剩余身体自动回缩拼接
   - 逐帧池化创建，避免初始化卡顿
@@ -129,6 +130,7 @@ git clone https://github.com/GGGoldeNNN/SnakeArena.git
 │   ├── image/                        贴图
 │   │   ├── enemy/                      蛇头/蛇身
 │   │   └── player/                     玩家飞机
+│   ├── shaders/                      自定义着色器
 │   └── ui/                           UI 面板
 ├── data/                           # 运行时数据
 │   └── post_process/                  后处理配置
@@ -155,8 +157,8 @@ git clone https://github.com/GGGoldeNNN/SnakeArena.git
 | 类型 | 数量 |
 |------|------|
 | 场景 (.tscn) | 30（含 20 个后处理子场景） |
-| 脚本 (.gd) | 46 |
-| 着色器 (.gdshader) | 21 |
-| 贴图 (.png) | 12 |
+| 脚本 (.gd) | 47 |
+| 着色器 (.gdshader) | 22 |
+| 贴图 (.png) | 13 |
 | 音频 (.mp3) | 3 |
 | 字体 (.ttf/.otf) | 2 |

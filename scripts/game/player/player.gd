@@ -9,7 +9,6 @@ extends Area2D
 ## ECS 实体 ID
 var entity_id: int = -1
 
-
 func _ready() -> void:
 	add_to_group("player")
 	_update_scale()
@@ -86,10 +85,11 @@ func _try_damage_and_knockback(from_position: Vector2) -> void:
 	var movement := EcsWorld.get_component(entity_id, PlayerMovementData) as PlayerMovementData
 	if movement:
 		movement.apply_knockback(from_position, global_position)
-	_flash_hit()
+	flash_hit()
 
 
-func _flash_hit() -> void:
+## 受击闪烁（公开方法，供外部系统调用）
+func flash_hit() -> void:
 	modulate = Color(1, 0.3, 0.3, 1)
 	var tw := create_tween()
 	tw.tween_property(self, "modulate", Color.WHITE, 0.15)

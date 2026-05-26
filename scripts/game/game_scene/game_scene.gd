@@ -4,6 +4,7 @@ extends Node2D
 
 
 func _ready() -> void:
+	GameManager.reset()
 	_init_bullet_manager()
 	_spawn_player()
 	_spawn_boss(200)

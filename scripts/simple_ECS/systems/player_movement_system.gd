@@ -84,8 +84,15 @@ func _clamp_to_screen(data: PlayerMovementData, node: Node2D, eid: int) -> void:
 
 		# 边界碰撞造成伤害
 		var health := EcsWorld.get_component(eid, HealthData) as HealthData
+		Debug.Log("撞墙: invincible_timer=%s, is_dead=%s" % [health.invincible_timer if health else "null", health.is_dead if health else "null"])
 		if health and health.invincible_timer <= 0 and not health.is_dead:
 			health.take_damage(1.0)
+			Debug.Log("撞墙扣血: HP=%s/%s" % [health.current_hp, health.max_hp])
 			SignalManager.player_damaged.emit(health.current_hp, health.max_hp)
 			if health.is_dead:
+				Debug.Log("撞墙导致玩家死亡")
 				SignalManager.player_died.emit()
+
+			# 边界碰撞触发受击闪烁
+			if node.has_method("flash_hit"):
+				node.flash_hit()

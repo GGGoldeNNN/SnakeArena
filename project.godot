@@ -24,6 +24,7 @@ AudioManager="*res://scripts/manager/audio_manager.gd"
 GameManager="*res://scripts/manager/game_manager.gd"
 SaveManager="*res://scripts/save_system/save_manager.gd"
 EcsWorld="*res://scripts/simple_ECS/core/ecs_world.gd"
+MCPGameBridge="res://addons/godot_mcp/game_bridge/mcp_game_bridge.gd"
 
 [display]
 
@@ -45,6 +46,13 @@ folder_colors={
 "res://scenes/": "purple",
 "res://scripts/": "green"
 }
+
+[godot_mcp]
+
+bind_mode=0
+custom_bind_ip=""
+port_override_enabled=false
+port_override=6550
 
 [physics]
 
