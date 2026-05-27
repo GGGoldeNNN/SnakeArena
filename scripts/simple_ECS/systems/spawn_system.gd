@@ -91,7 +91,16 @@ func _apply_enemy_data(enemy: Node2D, data: EnemyData) -> void:
 	var movement := EcsWorld.get_component(eid, MovementData) as MovementData
 	if movement:
 		movement.speed = data.speed
-		movement.pattern = data.move_pattern as int
+		# 显式映射 EnemyData.MovePattern → MovementData.Pattern
+		match data.move_pattern:
+			EnemyData.MovePattern.LINEAR:
+				movement.pattern = MovementData.Pattern.LINEAR
+			EnemyData.MovePattern.SINE:
+				movement.pattern = MovementData.Pattern.SINE
+			EnemyData.MovePattern.CHASE:
+				movement.pattern = MovementData.Pattern.CHASE
+			EnemyData.MovePattern.ORBIT:
+				movement.pattern = MovementData.Pattern.ORBIT
 		movement.amplitude = data.amplitude
 		movement.frequency = data.frequency
 		movement.time_elapsed = 0.0

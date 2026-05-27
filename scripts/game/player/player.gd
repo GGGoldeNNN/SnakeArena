@@ -73,6 +73,11 @@ func set_width(pixels: float) -> void:
 
 # === 碰撞处理 ===
 
+## 公开方法：从外部造成伤害（敌弹碰撞等）
+func take_damage(from_position: Vector2) -> void:
+	_try_damage_and_knockback(from_position)
+
+
 func _try_damage_and_knockback(from_position: Vector2) -> void:
 	var health := EcsWorld.get_component(entity_id, HealthData) as HealthData
 	if health:

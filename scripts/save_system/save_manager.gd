@@ -139,7 +139,7 @@ func delete_save_data(save_id: int) -> void:
 
 ## 删除所有存档[br]
 ## 重置存档元数据
-func clear_all_save_data():
+func clear_all_save_data() -> void:
 	## 删除所有存档文件
 	var save_ids = get_all_save_ids()
 	for save_id in save_ids:
@@ -170,7 +170,7 @@ func _save_system_data() -> void:
 	file.close()
 
 ## 加载存档系统元数据
-func _load_system_data():
+func _load_system_data() -> void:
 	var file_path = _get_meta_file_path()
 	if not FileAccess.file_exists(file_path):
 		print("SaveManager: 元数据文件不存在，创建新元数据")

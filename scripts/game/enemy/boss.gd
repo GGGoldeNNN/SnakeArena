@@ -42,6 +42,8 @@ var _freeze_timer: float = 0.0
 
 ## 身体节点对象池（预创建+隐藏，按需激活）
 var _node_pool: Array[MonsterNode] = []
+## 已摧毁身体计数（用于计算剩余 = body_count - _destroyed_count）
+var _destroyed_count: int = 0
 
 
 func _ready() -> void:
@@ -264,6 +266,7 @@ func _on_body_destroyed(node: MonsterNode) -> void:
 		return
 	_body_segments.remove_at(idx)
 
+	_destroyed_count += 1
 	# 单 Tween 并行驱动所有剩余身体
 	var duration := 0.2
 	_freeze_timer = duration
@@ -279,7 +282,7 @@ func _on_body_destroyed(node: MonsterNode) -> void:
 	_pool_deactivate(node)
 	_node_pool.append(node)
 
-	Debug.Log("Boss: 一节身体被摧毁，剩余 %d 节" % _body_segments.size())
+	Debug.Log("Boss: 一节身体被摧毁（剩余 %d / %d 节）" % [body_count - _destroyed_count, body_count])
 
 	if _body_segments.is_empty():
 		_state = State.RETREATING

@@ -8,11 +8,14 @@ extends Area2D
 ## 最大飞行距离（超过后自毁）
 @export var max_distance: float = 3000.0
 
+
 var _direction: Vector2 = Vector2.RIGHT
 var _distance_traveled: float = 0.0
 var _damage: float = 1.0
 ## 所属 BulletManager（对象池回收用）
 var _manager: Node = null
+## true = 玩家子弹（命中敌人），false = 敌人子弹（命中玩家）
+var is_from_player: bool = true
 
 
 func _ready() -> void:
@@ -41,6 +44,7 @@ func reset() -> void:
 	rotation = 0.0
 	position = Vector2.ZERO
 	_manager = null
+	is_from_player = true
 	if not area_entered.is_connected(_on_area_entered):
 		area_entered.connect(_on_area_entered)
 
@@ -48,7 +52,7 @@ func reset() -> void:
 ## 返回对象池或销毁
 func _release() -> void:
 	if _manager:
-		_manager.release_bullet(self, true)
+		_manager.release_bullet(self, is_from_player)
 	else:
 		queue_free()
 
@@ -70,6 +74,14 @@ func _process(delta: float) -> void:
 
 
 func _on_area_entered(area: Area2D) -> void:
+	if is_from_player:
+		_on_player_bullet_hit(area)
+	else:
+		_on_enemy_bullet_hit(area)
+
+
+## 玩家子弹命中敌人
+func _on_player_bullet_hit(area: Area2D) -> void:
 	if not area.is_in_group("enemy"):
 		return
 	AudioManager.play_sfx("hit")
@@ -77,6 +89,26 @@ func _on_area_entered(area: Area2D) -> void:
 		area_entered.disconnect(_on_area_entered)
 	_damage_enemy(area)
 	SignalManager.bullet_hit_enemy.emit(self, area)
+	_spawn_hit_spark()
+	_release()
+
+
+## 在碰撞位置生成命中火花
+func _spawn_hit_spark() -> void:
+	var bm := _manager as BulletManager
+	if bm:
+		bm.spawn_hit_spark(global_position)
+
+
+## 敌人子弹命中玩家
+func _on_enemy_bullet_hit(area: Area2D) -> void:
+	if not area.is_in_group("player"):
+		return
+	if area_entered.is_connected(_on_area_entered):
+		area_entered.disconnect(_on_area_entered)
+	var player := area as Player
+	if player:
+		player.take_damage(global_position)
 	_release()
 
 

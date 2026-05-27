@@ -7,7 +7,7 @@ const GAME_VERSION: String = "0.0.1"
 enum State { PLAYING, WON, LOST }
 
 ## 当前游戏状态
-var state: int = State.PLAYING
+var state: State = State.PLAYING
 
 
 ## 重置游戏状态（新游戏开始时调用）

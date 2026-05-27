@@ -19,7 +19,6 @@ func _ready() -> void:
 	add_to_group("enemy")
 	_update_scale()
 	_init_ecs()
-	Debug.Log("MonsterNode: 身体节点初始化完成")
 
 
 func _init_ecs() -> void:
@@ -29,6 +28,12 @@ func _init_ecs() -> void:
 	health.invincible_time = 0.5
 	health.current_hp = 3.0
 	EcsWorld.add_component(entity_id, health)
+
+	# 移动组件（由 SpawnSystem._apply_enemy_data 配置具体参数）
+	EcsWorld.add_component(entity_id, MovementData.new())
+
+	# 射击组件（由 SpawnSystem._apply_enemy_data 开启/配置）
+	EcsWorld.add_component(entity_id, ShooterData.new())
 
 
 ## 等比缩放到目标尺寸

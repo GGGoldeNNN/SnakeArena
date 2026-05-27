@@ -36,7 +36,11 @@ res://
 │   ├── bullet/
 │   │   ├── bullet.tscn         #     子弹预制体（Area2D + Sprite2D + CollisionShape2D）
 │   │   └── bullet_manager.tscn #     子弹管理器预制体
+│   ├── effects/                #     视觉特效预制体
+│   │   ├── hit_spark.tscn      #       命中火花（Node2D + HitSpark）
+│   │   └── ring_effect.tscn    #       环形特效（Node2D + RingEffect）
 │   ├── enemy/
+│   │   ├── base_enemy.tscn     #     小怪基类预制体（Area2D, extends Enemy）
 │   │   ├── boss.tscn           #     Boss 蛇形敌人（Node2D）
 │   │   ├── monster_head.tscn   #     蛇头（Area2D）
 │   │   └── monster_node.tscn   #     蛇身节点（Area2D）
@@ -51,13 +55,19 @@ res://
 │   │   └── fail_window.tscn    #     失败窗口
 │   └── game_root.tscn          #   游戏入口/根场景
 ├── scripts/                    # 脚本（编辑器标绿色）
+│   ├── base/                   #   基类脚本
+│   │   └── enemy.gd            #     敌人基类（class_name Enemy, extends Node2D）
+│   ├── effects/                #   视觉特效脚本（纯 _draw，支持对象池）
+│   │   ├── hit_spark.gd        #     命中火花（class_name HitSpark）
+│   │   └── ring_effect.gd      #     环形特效（class_name RingEffect）
 │   ├── game/                   #   游戏实体逻辑
 │   │   ├── bullet/bullet.gd    #     子弹（Area2D，class_name Bullet）
 │   │   ├── enemy/
+│   │   │   ├── base_enemy.gd   #     小怪 ECS 实体（extends Enemy, class_name BaseEnemy）
 │   │   │   ├── boss.gd         #     Boss 控制器（贪吃蛇结构）
 │   │   │   ├── monster_head.gd #     蛇头（仅视觉+碰撞，不受伤）
 │   │   │   └── monster_node.gd #     蛇身节点（独立受击/销毁）
-│   │   ├── game_scene/game_scene.gd # 游戏主场景（生成玩家/Boss/子弹管理器）
+│   │   ├── game_scene/game_scene.gd # 游戏主场景（生成玩家/小怪/子弹管理器）
 │   │   ├── player/player.gd    #     玩家飞机（class_name Player，协调器）
 │   │   └── ui/game_window.gd    #     胜利/失败窗口通用逻辑
 │   ├── manager/                #   全局管理器（autoload）
@@ -77,14 +87,16 @@ res://
 │   │   │   ├── health_data.gd  #       生命值 （class_name HealthData）
 │   │   │   ├── player_movement_data.gd # 玩家移动 （class_name PlayerMovementData）
 │   │   │   ├── auto_shooter_data.gd    # 自动瞄准射击 （class_name AutoShooterData）
-│   │   │   ├── movement_data.gd        # 敌人移动 （class_name MovementData）
+│   │   │   ├── movement_data.gd        # 敌人移动 （class_name MovementData, SPEED_DEFAULT=200）
 │   │   │   ├── shooter_data.gd         # 敌人射击 （class_name ShooterData）
 │   │   │   ├── bullet_data.gd          # 子弹属性 （class_name BulletData）
-│   │   │   └── enemy_data.gd           # 敌人配置 （class_name EnemyData）
+│   │   │   ├── enemy_data.gd           # 敌人配置 （class_name EnemyData）
+│   │   │   └── face_target_data.gd     # 面朝目标 （class_name FaceTargetData）
 │   │   └── systems/            #     系统（场景树挂载，驱动逻辑）
 │   │       ├── player_movement_system.gd # 玩家移动
 │   │       ├── auto_shoot_system.gd      # 自动瞄准/射击
 │   │       ├── movement_system.gd        # 敌人移动
+│   │       ├── face_target_system.gd     # 敌人面朝玩家旋转
 │   │       ├── shooter_system.gd         # 敌人射击
 │   │       ├── health_system.gd          # 生命值/无敌/死亡
 │   │       ├── bullet_manager.gd         # 子弹对象池管理（class_name BulletManager）
@@ -222,6 +234,7 @@ var node := EcsWorld.get_entity_node(eid)       # 获取实体节点
 > **设计原则**：ECS 是工具不是目的。简单玩法用简单架构，不强行将每个实体都塞进 ECS。
 > 目前注册情况：
 > - **Player** — 完整注册（HealthData + PlayerMovementData + AutoShooterData）
+> - **BaseEnemy** — 完整注册（HealthData + MovementData[CHASE] + FaceTargetData），对象池管理
 > - **MonsterNode** — 完整注册（HealthData），对象池管理
 > - **Boss** — 自包含，不注册 ECS
 > - **MonsterHead** — 仅注册实体 ID（用于子弹碰撞查询），不挂载组件
@@ -350,6 +363,7 @@ Systems (Node)
 ├── PlayerMovementSystem      # 先处理玩家输入
 ├── AutoShootSystem           # 再自动瞄准射击
 ├── MovementSystem            # 敌人移动
+├── FaceTargetSystem          # 敌人面朝玩家
 ├── ShooterSystem             # 敌人射击
 └── HealthSystem              # 最后处理死亡（无敌计时等）
 ```
@@ -452,14 +466,22 @@ _trail_distances: Array[float]    # 累计距离
 - 运行中生成白色圆形纹理（12×12 像素 Image）
 - 碰撞检测: area_entered → 检查 `is_in_group("enemy")` → 通过 entity_id 获取 HealthData → 造成伤害
 - 碰撞后断开 area_entered 连接，防止重复触发
+- 命中敌人时在碰撞位置生成 HitSpark（从 BulletManager 池获取）
 - 飞行超过 max_distance 后自动回收
 - 如果目标已死亡（health.is_dead）且实现了 `on_destroyed()`，立即触发销毁回调
 
 ### BulletManager（class_name BulletManager, extends Node）
 
-- 管理玩家和敌人两套对象池（prewarm=30）
-- `spawn_player_bullet(data)` / `spawn_enemy_bullet(data)` — 从池中获取并配置
-- `release_bullet(bullet, is_player)` — 回收
+- 管理 4 个对象池：玩家子弹、敌人子弹、命中火花、环形特效
+
+| 池 | Prewarm | 方法 |
+|---|---------|------|
+| 玩家子弹 | 30 | `spawn_player_bullet(data)` |
+| 敌人子弹 | 30 | `spawn_enemy_bullet(data)` |
+| 命中火花 | 10 | `spawn_hit_spark(pos)` |
+| 环形特效 | 5 | `spawn_portal_effect(pos)` / `spawn_death_ring_effect(pos, radius)` |
+
+- `release_bullet(bullet, is_player)` — 回收子弹
 
 ### 碰撞层
 
@@ -532,10 +554,77 @@ enum Pattern { LINEAR, SINE, CHASE, ORBIT, STOP }
 
 游戏主场景 `game_root.tscn → game_scene.tscn`（开发模式直接进入游戏）。
 
-- `_ready()` 流程: 初始化 BulletManager → 生成 Player → 生成 Boss（body_count=200）→ 播放 BGM
-- 使用 `BossInitialPosition` (Marker2D) 标记 Boss 生成位置
+- `_ready()` 流程: 初始化 BulletManager → 生成 Player → 初始化敌人对象池 → 播放 BGM
+- 小怪生成: `_process(delta)` 每 `enemy_spawn_interval`（2.5s）从池中 acquire，上限 `max_active_enemies`（30）
+- 生成位置: `world_boundary` 内随机，距离玩家至少 `enemy_min_spawn_dist`（400px）
+- spawn 后自动调用 `play_spawn_effect()`（传送门 + 弹跳出现）
 - 世界边界可视化: 3000×3000 区域，半透明填充 + 100px 网格 + 虚线边框（在 _draw 中随玩家位置渲染）
 - 游戏根节点 `game_root.gd`: `SceneManager.game_root = self` + 直接切换到游戏场景
+
+---
+
+## 敌人继承体系
+
+小怪使用三层继承：
+
+```
+Enemy (extends Node2D, class_name Enemy)        # scripts/base/enemy.gd
+  └─ BaseEnemy (extends Enemy, class_name BaseEnemy)  # scripts/game/enemy/base_enemy.gd
+       └─ scene: base_enemy.tscn
+```
+
+### Enemy 基类（scripts/base/enemy.gd）
+
+- `extends Node2D`，`class_name Enemy`
+- 通用功能：ECS 注册（_init_ecs 虚方法）、等比缩放、对象池（pool/is_pooled）、受击闪红
+- 出生特效 `play_spawn_effect()`：传送门环 + 弹跳缩放（0→1, TRANS_BOUNCE）
+- 死亡特效 `_play_death_effect()`：停止移动 → 死亡线圈 + 破碎粒子 → 缩小淡出 → 归还池
+- 特效通过 BulletManager 对象池获取（`_get_bullet_manager()` 静态方法查找）
+
+### BaseEnemy（scripts/game/enemy/base_enemy.gd）
+
+- `extends Enemy`，`class_name BaseEnemy`
+- 仅实现 `_init_ecs()`：注册 HealthData（hp=3）+ MovementData（speed=200, CHASE）+ FaceTargetData
+
+---
+
+## 视觉特效系统
+
+所有特效使用纯 `_draw()` 渲染，支持对象池回收。
+
+### HitSpark — 命中火花
+
+- `scenes/effects/hit_spark.tscn` + `scripts/effects/hit_spark.gd`
+- 8 个粒子，随机角度/速度/颜色（金黄 → 橙 → 白）
+- 动画时长 0.2s，自动回收至 BulletManager 池（prewarm=10）
+- 子弹命中敌人时在碰撞位置触发
+
+### RingEffect — 环形特效
+
+- `scenes/effects/ring_effect.tscn` + `scripts/effects/ring_effect.gd`
+- 两种模式：
+
+| 模式 | 用途 | 外观 | 时长 |
+|------|------|------|------|
+| `play_portal()` | 敌人生成传送门 | 双旋转弧线（内外反向） | 0.4s |
+| `play_death_rings()` | 死亡线圈+粒子 | 2 层白线圈 + 12 破碎粒子 | 0.5s |
+
+- BulletManager 池管理（prewarm=5），动画结束自动回收
+
+### 特效池管理
+
+所有特效池集中在 BulletManager 中，通过预制体创建：
+
+```
+BulletManager._ready()
+  ├─ _hit_spark_pool = ObjectPool(HitSparkScene, self, 10)
+  └─ _ring_effect_pool = ObjectPool(RingEffectScene, self, 5)
+```
+
+特效对象要求：
+1. 实现 `reset()` — kill 残留 tween + 重置状态
+2. `pool` 属性接收所属池引用，`_finish()` 时调用 `pool.release(self)` 而非 `queue_free()`
+3. `_tweens: Array[Tween]` 跟踪所有活跃 tween，`reset()` 时统一清理
 
 ---
 

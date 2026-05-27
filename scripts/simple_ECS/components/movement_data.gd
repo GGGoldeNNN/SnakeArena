@@ -3,13 +3,16 @@
 class_name MovementData
 extends Resource
 
+## 默认速度（用于 reset 恢复）
+const SPEED_DEFAULT: float = 200.0
+
 ## 移动模式
 enum Pattern { LINEAR, SINE, CHASE, ORBIT, STOP }
 
 ## 当前模式
 @export var pattern: Pattern = Pattern.LINEAR
 ## 移动速度
-@export var speed: float = 200.0
+@export var speed: float = SPEED_DEFAULT
 ## 移动方向（弧度，0=右，PI/2=下）
 @export var direction: float = PI / 2
 ## 正弦/轨道幅度

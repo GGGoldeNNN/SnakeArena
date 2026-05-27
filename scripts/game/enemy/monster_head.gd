@@ -7,7 +7,7 @@ extends Area2D
 ## 目标显示尺寸（宽度，等比缩放）
 @export var display_size: float = 150.0
 
-## ECS 实体 ID（无组件，仅用于子弹碰撞查询）
+## ECS 实体 ID（仅注册供子弹碰撞查询用，无 HealthData → 头部不受伤害但触发 flash_hit）
 var entity_id: int = -1
 
 

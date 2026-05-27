@@ -6,12 +6,17 @@
 [ext_resource type="Script" uid="uid://bawe7qdn4x1ii" path="res://scripts/simple_ECS/systems/movement_system.gd" id="4_mvst"]
 [ext_resource type="Script" uid="uid://bvwxdcc8p0obr" path="res://scripts/simple_ECS/systems/shooter_system.gd" id="5_shst"]
 [ext_resource type="Script" uid="uid://b7e4i85cdx107" path="res://scripts/simple_ECS/systems/health_system.gd" id="6_hlst"]
+[ext_resource type="Script" path="res://scripts/simple_ECS/systems/face_target_system.gd" id="7_fcts"]
+[ext_resource type="FontFile" uid="uid://c2sgf783nhwmg" path="res://assets/fonts/思源宋体 Bold.otf" id="7_dgii4"]
 [ext_resource type="Texture2D" uid="uid://xfe04jdgjfve" path="res://assets/ui/avatar_panel.png" id="7_wmtvo"]
-[ext_resource type="Texture2D" uid="uid://4vyhues63utd" path="res://assets/image/player/player_airplane_avatar.png" id="8_201br"]
 [ext_resource type="Shader" uid="uid://buqx5i4kq3w4q" path="res://assets/shaders/alpha_mask.gdshader" id="9_ams"]
+[ext_resource type="Texture2D" uid="uid://d2avch1u70b5a" path="res://assets/image/player/player_airplane_avatar.svg" id="9_j6s53"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_201br"]
-texture = ExtResource("7_wmtvo")
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hqmgi"]
+bg_color = Color(0.09375, 0.09375, 0.09375, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3di6p"]
+bg_color = Color(0.92941177, 0.195042, 0.3702019, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ams"]
 shader = ExtResource("9_ams")
@@ -37,6 +42,9 @@ script = ExtResource("5_shst")
 [node name="HealthSystem" type="Node" parent="Systems" unique_id=1726836356]
 script = ExtResource("6_hlst")
 
+[node name="FaceTargetSystem" type="Node" parent="Systems"]
+script = ExtResource("7_fcts")
+
 [node name="BG" type="CanvasLayer" parent="." unique_id=1662820033]
 layer = -99
 
@@ -53,6 +61,8 @@ color = Color(0.77929145, 0.77929133, 0.7792915, 1)
 [node name="BossInitialPosition" type="Marker2D" parent="GameNode" unique_id=1341452995]
 position = Vector2(960, -1500)
 
+[node name="Enemys" type="Node2D" parent="GameNode" unique_id=101618463]
+
 [node name="GameUI" type="CanvasLayer" parent="." unique_id=1061574652]
 
 [node name="PlayerStatus" type="Control" parent="GameUI" unique_id=1606342227]
@@ -62,8 +72,34 @@ anchor_right = 1.0
 offset_bottom = 150.0
 grow_horizontal = 2
 
-[node name="AvatarPanel" type="Panel" parent="GameUI/PlayerStatus" unique_id=2115355999]
-self_modulate = Color(0.5639453, 1, 0.23242438, 1)
+[node name="HealthBar" type="ProgressBar" parent="GameUI/PlayerStatus" unique_id=1292371641]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 49.0
+offset_right = 306.0
+offset_bottom = 83.0
+theme_override_fonts/font = ExtResource("7_dgii4")
+theme_override_styles/background = SubResource("StyleBoxFlat_hqmgi")
+theme_override_styles/fill = SubResource("StyleBoxFlat_3di6p")
+max_value = 5.0
+step = 1.0
+value = 3.0
+show_percentage = false
+
+[node name="HealthNum" type="Label" parent="GameUI/PlayerStatus/HealthBar" unique_id=1755383518]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("7_dgii4")
+theme_override_font_sizes/font_size = 20
+text = "3/5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AvatarPanel" type="TextureRect" parent="GameUI/PlayerStatus" unique_id=1711549137]
 clip_contents = true
 layout_mode = 1
 anchors_preset = 4
@@ -74,7 +110,8 @@ offset_top = -40.0
 offset_right = 130.0
 offset_bottom = 40.0
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_201br")
+texture = ExtResource("7_wmtvo")
+expand_mode = 1
 
 [node name="AvatarImage" type="TextureRect" parent="GameUI/PlayerStatus/AvatarPanel" unique_id=145966159]
 material = SubResource("ShaderMaterial_ams")
@@ -84,12 +121,12 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -37.0
-offset_top = -37.0
-offset_right = 37.0
-offset_bottom = 37.0
+offset_left = -30.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset_ratio = Vector2(0.5, 0.5)
-texture = ExtResource("8_201br")
+texture = ExtResource("9_j6s53")
 expand_mode = 1

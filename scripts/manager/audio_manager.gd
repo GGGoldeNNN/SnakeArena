@@ -80,30 +80,26 @@ func _load_audio_from_directory() -> void:
 
 ## 递归加载目录及其子目录中的音频文件
 func _load_audio_from_directory_recursive(dir_path: String) -> void:
-	# 使用 ResourceLoader.list_directory 获取目录文件列表（支持打包后访问）
-	var files: PackedStringArray = ResourceLoader.list_directory(dir_path)
-	
-	# 检查是否获取成功
-	if files == null or files.is_empty():
+	var dir := DirAccess.open(dir_path)
+	if not dir:
+		Debug.Log_Error("AudioManager: 无法打开目录 - " + dir_path)
 		return
-	
-	# 遍历所有文件
-	for file_name: String in files:
-		# 跳过隐藏文件
-		if not file_name.begins_with("."):
-			# 构建完整路径
-			var full_path: String = dir_path + file_name
-			
-			# 检查是否是目录（通过尝试列出目录内容来判断）
-			var sub_files: PackedStringArray = ResourceLoader.list_directory(full_path)
-			if sub_files != null and not sub_files.is_empty():
-				# 是目录，递归加载
-				_load_audio_from_directory_recursive(full_path + "/")
-			else:
-				# 是文件，检查是否是支持的音频格式
-				if _is_audio_file(file_name):
-					# 加载音频文件，传入相对路径
-					_load_audio_file(full_path)
+
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if file_name.begins_with("."):
+			file_name = dir.get_next()
+			continue
+
+		var full_path := dir_path.path_join(file_name)
+		if dir.current_is_dir():
+			_load_audio_from_directory_recursive(full_path + "/")
+		elif _is_audio_file(file_name):
+			_load_audio_file(full_path)
+
+		file_name = dir.get_next()
+	dir.list_dir_end()
 
 
 ## 检查文件是否是音频文件
@@ -284,7 +280,7 @@ func has_audio(audio_name: String) -> bool:
 
 
 ## 获取所有已加载的音频名称列表
-func get_all_audio_names() -> Array:
+func get_all_audio_names() -> Array[String]:
 	return _audio_dict.keys()
 
 
